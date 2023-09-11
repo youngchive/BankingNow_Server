@@ -40,6 +40,13 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'money',
+<<<<<<< Updated upstream
+=======
+    'users',
+    'accounts',
+    'drf_yasg',
+
+>>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
