@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import path, include
 from . import views
+from django.views.generic import RedirectView
 
 from rest_framework import routers
 from django.conf import settings
@@ -52,7 +53,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('process_audio/', views.process_audio, name='process_audio'),
     path('get_spectrogram/', views.get_spectrogram, name='get_spectrogram'),
-    #path('send_money/', views.send_money, name='send_money'),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
 
 ]
 
