@@ -4,7 +4,7 @@ from rest_framework import status
 from django.contrib.auth.models import User
 
 from django.contrib.auth import authenticate
-from BankingServer.accounts.serializers import PasswordCheckSerializer
+from accounts.serializers import PasswordCheckSerializer
 
 # http://localhost:8000/accounts/check_password/ 링크로 접근
 
