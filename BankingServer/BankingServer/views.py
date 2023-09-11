@@ -7,6 +7,7 @@ import requests
 import traceback
 import json
 
+
 def get_spectrogram(request):
     if request.method == 'GET':
         # 클라이언트에서 전송한 파일을 가져옵니다.
@@ -23,9 +24,9 @@ def get_spectrogram(request):
                     print(f"{audio_path} is opened.")
 
                 data = {'recordData': byte_array}
-                #response = requests.post(url, data=json.dumps(data), headers=headers)
-                response = requests.post(url, data= json.dumps(data))
-                #response = requests.post(url, data=byte_array)
+                # response = requests.post(url, data=json.dumps(data), headers=headers)
+                response = requests.post(url, data=json.dumps(data))
+                # response = requests.post(url, data=byte_array)
 
                 print(response.json())
 
@@ -66,13 +67,13 @@ matplotlib.use('Agg')
 FIG_SIZE = (15, 10)
 DATA_NUM = 30
 
-alpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-         'w', 'x', 'y', 'z']
+number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 # 음성 데이터의 샘플링 레이트, 채널 수, 샘플링 포맷 등을 정의합니다.
 SAMPLE_RATE = 44100
 CHANNELS = 1
 SAMPLE_WIDTH = 2
+
 
 # m4a -> wav -> spectrogram / -> resnetModel -> result
 @csrf_exempt
@@ -201,7 +202,7 @@ def process_audio(request):
             # get the predicted class index
             predicted_class_index = torch.argmax(prediction).item()
 
-            response = {'predicted_alphabet': alpha[predicted_class_index]}
+            response = {'predicted_alphabet': number[predicted_class_index]}
             # 예측값 알파벳 출력
             print("post: ", response)
             return JsonResponse(response)
