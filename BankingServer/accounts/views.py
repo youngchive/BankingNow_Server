@@ -5,7 +5,8 @@ from users.models import User  # 사용자 모델의 정확한 임포트 경로�
 
 from django.contrib.auth import authenticate
 
-from .serializers import PasswordCheckSerializer
+from accounts.serializers import PasswordCheckSerializer
+
 
 # http://localhost:8000/accounts/check_password/ 링크로 접근
 class PasswordCheckView(APIView):
