@@ -54,6 +54,7 @@ urlpatterns = [
     path('process_audio/', views.process_audio, name='process_audio'),
     path('get_spectrogram/', views.get_spectrogram, name='get_spectrogram'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('money/', include('money.urls', namespace='money')),
 
 ]
 

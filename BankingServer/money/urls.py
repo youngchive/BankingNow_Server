@@ -1,9 +1,8 @@
-from django.contrib import admin
-from django.urls import path, include
-from django.conf.urls import url
-# from .views import deposit_view, withdraw_view, transfer_view
+from django.urls import path
 
-# urlpatterns = [
-#     path('transfer/<account_no>', transfer_view, name='Transfer'),
-#     path('transfer_option', transfer_view, name='Transfer'),
-# ]
+from .views import BalanceCheckView
+app_name = 'money'
+
+urlpatterns = [
+    path('check_balance/', BalanceCheckView.as_view(), name='check_password'),
+]
