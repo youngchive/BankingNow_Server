@@ -17,8 +17,8 @@ class Bank(models.Model):
 
 class Transfer(models.Model):
     money = models.ForeignKey(Money, on_delete=models.CASCADE)
-    account_no_to = models.CharField(max_length=20)
-    account_no_from = models.CharField(max_length=20)
+    account_no_to = models.CharField(max_length=20, verbose_name='받는 계좌번호')
+    account_no_from = models.CharField(max_length=20, verbose_name='주는 계좌번호')
 
     bank_list = (
         ('국민', '국민은행'),
@@ -31,14 +31,15 @@ class Transfer(models.Model):
         ('카카오', '카카오뱅크'),
     )
 
-    account_bank_to = models.CharField(max_length=10, choices=bank_list)
-    account_bank_from = models.CharField(max_length=10, choices=bank_list)
+    account_bank_to = models.CharField(max_length=10, verbose_name='받는 은행', choices=bank_list)
+    account_bank_from = models.CharField(max_length=10, verbose_name='주는 은행', choices=bank_list)
 
-    user_to = models.CharField(max_length=20)
+    user_to = models.CharField(max_length=20, verbose_name='받는 사람')
 
     amount = models.DecimalField(
         decimal_places=0,
         max_digits=10,
+        verbose_name='금액',
         validators=[
             MinValueValidator(Decimal('10'))
         ]
