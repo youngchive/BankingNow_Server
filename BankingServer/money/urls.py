@@ -1,3 +1,4 @@
+
 from django.contrib import admin
 from django.urls import path, include
 #from django.conf.urls import url
@@ -8,4 +9,13 @@ from . import views
 urlpatterns = [
     path('employee-signup/', views.TransferView.as_view()),
     #path('student-signup/', views.StudentCreate.as_view()),
+]
+
+from django.urls import path
+
+from .views import BalanceCheckView
+app_name = 'money'
+
+urlpatterns = [
+    path('check_balance/', BalanceCheckView.as_view(), name='check_password'),
 ]

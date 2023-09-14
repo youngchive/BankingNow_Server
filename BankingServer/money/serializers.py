@@ -5,3 +5,8 @@ class TransferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transfer
         fields = '__all__'
+
+
+class BalanceCheckSerializer(serializers.Serializer):
+    balance = serializers.IntegerField()
+
