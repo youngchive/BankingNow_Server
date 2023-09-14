@@ -177,7 +177,7 @@ def process_audio(request):
             plt.close()
 
             # 모델 입히기
-            model = torch.load('djangoServer/resnetModel/resnet34.pth')
+            model = torch.load('BankingServer/resnetModel/resnet34.pth')
             # switch resnetModel to evaluation mode
             model.eval()
             # define the image transforms
@@ -202,7 +202,7 @@ def process_audio(request):
             # get the predicted class index
             predicted_class_index = torch.argmax(prediction).item()
 
-            response = {'predicted_alphabet': number[predicted_class_index]}
+            response = {'predicted_number': number[predicted_class_index]}
             # 예측값 알파벳 출력
             print("post: ", response)
             return JsonResponse(response)
