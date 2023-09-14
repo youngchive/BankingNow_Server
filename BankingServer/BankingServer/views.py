@@ -7,48 +7,32 @@ import requests
 import traceback
 import json
 
+import textdistance
 
-def get_spectrogram(request):
+def get_bank(request):
     if request.method == 'GET':
-        # 클라이언트에서 전송한 파일을 가져옵니다.
+        # 클라이언트로부터 문자열 받기
+        user_input = request.GET.get('voiceBank') #"궁민은행"으로 입력받으면
 
-        audio_path = 'djangoServer/audio/W.m4a'
-        url = 'http://223.194.156.239:8000/process_audio/'
-        headers = {"Content-Type": "application/json"}
+        # 비교 대상 문자열 목록
+        candidates = ["국민은행", "농협은행", "신한은행", "우리은행", "하나은행"]
+        #"궁민은행"과 제일 비슷한 값을 찾음
 
-        try:
-            with open(audio_path, 'rb') as f:
-                byte_array = bytearray(f.read())  # 파일을 바이트 배열로 읽음
+        # 가장 가까운 문자열 찾기
+        min_distance = float('inf')  # 최소 거리 초기화
+        closest_candidate = None
 
-                if not f.closed:
-                    print(f"{audio_path} is opened.")
+        for candidate in candidates:
+            distance = textdistance.levenshtein(user_input, candidate)
+            if distance < min_distance:
+                min_distance = distance
+                closest_candidate = candidate
 
-                data = {'recordData': byte_array}
-                # response = requests.post(url, data=json.dumps(data), headers=headers)
-                response = requests.post(url, data=json.dumps(data))
-                # response = requests.post(url, data=byte_array)
-
-                print(response.json())
-
-                if response.status_code == 200:
-                    response_data = response.json()
-                    predicted_alphabet = response_data['predicted_alphabet']
-                    print("(get) response_data : ", response_data)
-                    print("(get) predicted_alphabet : ", predicted_alphabet)
-
-                    return JsonResponse({'predicted_alphabet': predicted_alphabet})
-                else:
-                    print(f"An error occurred: {response.status_code}")
-                    return JsonResponse({'error': f"An error occurred: {response.status_code}"})
-
-        except FileNotFoundError:
-            # 파일이 존재하지 않을 때의 예외 처리
-            print(f"{audio_path} does not exist.")
-            return JsonResponse({'error': f"An error occurred: FileNotFoundError"})
-        except Exception as e:
-            # 그 외의 예외 처리
-            print(f"An error occurred while opening {audio_path}: {e}")
-            return JsonResponse({'error': f"An error occurred: FileNotFoundError"})
+        # 결과 리턴
+        response_data = {
+            "closest_bank": closest_candidate,
+        }
+        return JsonResponse(response_data)
 
 
 # POST 응답 처리
@@ -177,7 +161,7 @@ def process_audio(request):
             plt.close()
 
             # 모델 입히기
-            model = torch.load('djangoServer/resnetModel/resnet34.pth')
+            model = torch.load('BankingServer/resnetModel/resnet34.pth')
             # switch resnetModel to evaluation mode
             model.eval()
             # define the image transforms
@@ -202,10 +186,11 @@ def process_audio(request):
             # get the predicted class index
             predicted_class_index = torch.argmax(prediction).item()
 
-            response = {'predicted_alphabet': number[predicted_class_index]}
+            response = {'predicted_number': number[predicted_class_index]}
             # 예측값 알파벳 출력
             print("post: ", response)
             return JsonResponse(response)
     except Exception as e:
         print(traceback.format_exc())  # 예외 발생시 traceback 메시지 출력
         return HttpResponseServerError()  # 500 Internal Server Error 응답 반환
+

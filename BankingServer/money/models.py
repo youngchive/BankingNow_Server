@@ -21,6 +21,7 @@ class Money(models.Model):
 class Bank(models.Model):
     bank_name = models.CharField(max_length=20, verbose_name='은행', blank=True, null=True, default='')
 
+
 class Transfer(models.Model):
     money = models.ForeignKey(Money, on_delete=models.CASCADE)
     account_no_to = models.CharField(max_length=20)
