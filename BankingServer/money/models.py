@@ -17,3 +17,4 @@ class Money(models.Model):
 
 class Bank(models.Model):
     bank_name = models.CharField(max_length=20, verbose_name='은행', blank=True, null=True, default='')
+
