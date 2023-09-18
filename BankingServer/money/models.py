@@ -23,6 +23,7 @@ class Money(models.Model):
 class Bank(models.Model):
     bank_name = models.CharField(max_length=20, verbose_name='은행', blank=True, null=True, default='')
 
+
 class Transfer(models.Model):
     money = models.ForeignKey(Money, on_delete=models.CASCADE, related_name='transfers_as_money')
     # user_to 필드를 Money 모델과 연결된 사용자와 연결
@@ -82,3 +83,4 @@ def get_money_user(user_id):
         return Money.objects.get(user_id=user_id)
     except Money.DoesNotExist:
         return None
+
