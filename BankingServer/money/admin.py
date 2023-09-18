@@ -12,6 +12,6 @@ class BankAdmin(admin.ModelAdmin):
 admin.site.register(Bank, BankAdmin)
 
 class TransferAdmin(admin.ModelAdmin):
-    list_display = ('id', 'account_no_to', 'account_no_from', 'account_bank_to', 'account_bank_from', 'user_to', 'amount')
+    list_display = ('id', 'account_no_to', 'account_bank_to', 'user_to', 'amount')
 
 admin.site.register(Transfer, TransferAdmin)
