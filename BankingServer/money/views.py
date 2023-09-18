@@ -1,7 +1,7 @@
 
 from django.shortcuts import render
 from .models import Money, Bank, Transfer
-from .serializers import TransferSerializer, BalanceCheckSerializer
+from .serializers import TransferSerializer, BalanceCheckSerializer, AccountCheckSerializer
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,7 +10,23 @@ from users.models import User  # 사용자 모델의 정확한 임포트 경로�
 from django.contrib.auth import authenticate
 
 
+class AccountCheckView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = AccountCheckSerializer(data=request.data)
+        if serializer.is_valid():
+            account_number = serializer.validated_data['account_number']
+            bank_name = serializer.validated_data['bank_name']
+
+            try:
+                money = Money.objects.get(account_number=account_number, bank_name__bank_name=bank_name)
+                user_id = money.user_id
+                return Response({"user_id": user_id}, status=status.HTTP_200_OK)
+            except Money.DoesNotExist:
+                return Response({"error": "일치하는 계좌가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class TransferView(generics.CreateAPIView):
+    serializer_class = TransferSerializer
     def post(self, request):
         serializer = TransferSerializer(data=request.data)
 
@@ -51,6 +67,7 @@ class TransferView(generics.CreateAPIView):
 
             return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class BalanceCheckView(APIView):
     def get(self, request):
