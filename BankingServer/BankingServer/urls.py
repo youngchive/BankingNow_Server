@@ -55,8 +55,6 @@ urlpatterns = [
     path('get_spectrogram/', views.get_spectrogram, name='get_spectrogram'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('money/', include('money.urls', namespace='money')),
-
-    path('money/', include('money.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
