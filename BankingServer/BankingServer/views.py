@@ -89,7 +89,7 @@ def load_resnet_model():
             nn.Dropout(p=0.5),
             nn.Linear(512, 10)
         )
-        resnet.load_state_dict(torch.load('BankingServer/resnetModel/best_resnet34_weights(911).pth'))
+        resnet.load_state_dict(torch.load('BankingServer/resnetModel/best_resnet34_weights(911_v2).pth'))
         resnet.eval()
         model_loaded = True
 

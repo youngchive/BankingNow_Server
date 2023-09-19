@@ -35,8 +35,8 @@ class TransferView(generics.CreateAPIView):
 
         if serializer.is_valid():
             # # account_bank_to와 account_no_to 값을 추출
-            # account_bank_to = request.data.get('account_bank_to')
-            # account_no_to = request.data.get('account_no_to')
+            account_bank_to = request.data.get('account_bank_to')
+            account_no_to = request.data.get('account_no_to')
 
             # 이체 정보 저장
             transfer_instance = serializer.save()
@@ -59,6 +59,7 @@ class TransferView(generics.CreateAPIView):
 
             if money.balance < amount:
                 # 잔액 부족 예외 처리
+                print("잔액부족")
                 return Response({"error": "잔액 부족"}, status=status.HTTP_400_BAD_REQUEST)
 
             money.balance -= amount
@@ -68,8 +69,11 @@ class TransferView(generics.CreateAPIView):
             #     "user_id": user_id  # Money 모델의 user_id 값을 클라이언트로 전달
             # }
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            print("송금완료:", money, amount, account_bank_to, account_no_to)
+            return_msg = "송금완료"
+            
+            return Response({"return_msg": return_msg}, status=status.HTTP_201_CREATED)
+        return Response({"return_msg": "송금 실패"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BalanceCheckView(APIView):
@@ -95,14 +99,3 @@ class BalanceCheckView(APIView):
         except Money.DoesNotExist:
             # 데이터가 없을 경우 기본값 설정
             return Response({"error": "잔액 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-        # except Money.DoesNotExist:
-        #     # 데이터가 없을 경우 기본값 설정
-        #     balance_value = 0
-
-        # print(money_instance.user_id, balance_value)
-
-        # # 시리얼라이즈
-        # serializer = BalanceCheckSerializer({'balance': balance_value})
-
-        # # 시리얼라이즈된 데이터를 JSON 형식으로 반환
-        # return Response(serializer.data, status=status.HTTP_200_OK)
