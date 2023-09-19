@@ -7,7 +7,16 @@ import requests
 import traceback
 import json
 
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader
+import torchvision.datasets as datasets
+import torchvision.transforms as transforms
+import torch
+
 import textdistance
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def get_bank(request):
     if request.method == 'GET':
@@ -58,6 +67,26 @@ SAMPLE_RATE = 44100
 CHANNELS = 1
 SAMPLE_WIDTH = 2
 
+# 다음 세 줄을 추가하여 모델을 미리 로드합니다.
+resnet = None
+model_loaded = False
+peekIndex = 0
+image_url = ""
+
+# 이전에 모델을 로드하는 함수를 정의합니다.
+def load_resnet_model():
+    global resnet
+    global model_loaded
+    if not model_loaded:
+        resnet = torch.hub.load('pytorch/vision:v0.6.0', 'resnet34')
+        resnet.fc = nn.Sequential(
+            nn.Dropout(p=0.5),
+            nn.Linear(512, 10)
+        )
+        resnet.load_state_dict(torch.load('BankingServer/resnetModel/best_resnet34_weights(911).pth'))
+        resnet.eval()
+        model_loaded = True
+
 
 # m4a -> wav -> spectrogram / -> resnetModel -> result
 @csrf_exempt
@@ -68,6 +97,8 @@ def process_audio(request):
     try:
         if request.method == 'POST':
             print("POST")
+
+            load_resnet_model()
 
             # POST 요청에서 biteArray 데이터를 가져옵니다.
             requestBody = json.loads(request.body)  # 안드로이드 앱에서 보낸 데이터를 가져옵니다.
@@ -160,10 +191,16 @@ def process_audio(request):
 
             plt.close()
 
-            # 모델 입히기
-            model = torch.load('BankingServer/resnetModel/resnet34.pth')
-            # switch resnetModel to evaluation mode
-            model.eval()
+
+#             resnet = torch.hub.load('pytorch/vision:v0.6.0', 'resnet34')
+#             resnet.fc = nn.Sequential(
+#                 nn.Dropout(p=0.5),  # 드롭아웃 추가
+#                 nn.Linear(512, 10)  # 출력층의 뉴런 수는 10
+# )
+#             # 모델 입히기
+#             resnet.load_state_dict(torch.load('BankingServer/resnetModel/best_resnet34_weights(911).pth'))
+#             # switch resnetModel to evaluation mode
+#             resnet.eval()
             # define the image transforms
             image_transforms = transforms.Compose([
                 transforms.Resize((224, 224)),
@@ -181,7 +218,7 @@ def process_audio(request):
 
             # get the resnetModel's prediction
             with torch.no_grad():
-                prediction = model(test_image_tensor)
+                prediction = resnet(test_image_tensor)
 
             # get the predicted class index
             predicted_class_index = torch.argmax(prediction).item()
