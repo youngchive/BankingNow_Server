@@ -17,4 +17,5 @@ class TransferSerializer(serializers.ModelSerializer):
 
 class BalanceCheckSerializer(serializers.Serializer):
     balance = serializers.IntegerField()
-
+    user_id = serializers.CharField()  # 사용자 ID 필드를 추가
+    bank_name = serializers.CharField()  # 은행 이름 필드를 추가

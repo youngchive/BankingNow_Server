@@ -77,14 +77,32 @@ class BalanceCheckView(APIView):
         try:
             money_instance = Money.objects.first()  # 첫번째
             balance_value = money_instance.balance
+            user_id = money_instance.user_id  # 사용자 ID 가져오기
+            bank_name = money_instance.bank_name.bank_name  # 은행 이름 가져오기
+
+            
+            # 시리얼라이즈
+            serializer = BalanceCheckSerializer({
+                'balance': balance_value,
+                'user_id': user_id,
+                'bank_name': bank_name,
+            })
+            print(user_id, bank_name, balance_value)
+
+            # 시리얼라이즈된 데이터를 JSON 형식으로 반환
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            
         except Money.DoesNotExist:
             # 데이터가 없을 경우 기본값 설정
-            balance_value = 0
+            return Response({"error": "잔액 정보를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        # except Money.DoesNotExist:
+        #     # 데이터가 없을 경우 기본값 설정
+        #     balance_value = 0
 
-        print(money_instance.user_id)
+        # print(money_instance.user_id, balance_value)
 
-        # 시리얼라이즈
-        serializer = BalanceCheckSerializer({'balance': balance_value})
+        # # 시리얼라이즈
+        # serializer = BalanceCheckSerializer({'balance': balance_value})
 
-        # 시리얼라이즈된 데이터를 JSON 형식으로 반환
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # # 시리얼라이즈된 데이터를 JSON 형식으로 반환
+        # return Response(serializer.data, status=status.HTTP_200_OK)
