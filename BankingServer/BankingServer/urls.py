@@ -52,7 +52,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('process_audio/', views.process_audio, name='process_audio'),
-    path('get_bank/', views.get_bank, name='get_bank'),
+    path('post_bank/', views.post_bank, name='post_bank'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('money/', include('money.urls', namespace='money')),
 ]
