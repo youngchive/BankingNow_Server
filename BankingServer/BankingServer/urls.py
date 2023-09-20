@@ -55,6 +55,7 @@ urlpatterns = [
     path('post_bank/', views.post_bank, name='post_bank'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('money/', include('money.urls', namespace='money')),
+    path('audio_test/', views.audio_test,name='audio_test'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
