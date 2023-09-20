@@ -94,10 +94,14 @@ def load_resnet_model():
         model_loaded = True
 
 
+version = 0
+
 # m4a -> wav -> spectrogram / -> resnetModel -> result
 @csrf_exempt
 def process_audio(request):
+    global version  # version 변수를 전역 변수로 사용
     global peekIndex, image_url
+    version += 1
 
     print("process_audio")
     try:
@@ -118,13 +122,13 @@ def process_audio(request):
 
             # aac -> wav
             input_file = "my_audio_file.aac"
-            output_file = "my_audio_file.wav"
+            output_file = f"my_audio_file_{version}.wav"
 
             # Run the ffmpeg command to convert the AAC file to WAV
             subprocess.run(["ffmpeg", "-y", "-i", input_file, output_file])
 
-            audio1 = AudioSegment.from_file("my_audio_file.wav", format="wav")
-            silence = AudioSegment.silent(duration=1000)  # 1초 묵음
+            audio1 = AudioSegment.from_file(f"my_audio_file_{version}.wav", format="wav")
+            silence = AudioSegment.from_file("silent.wav", format="wav")  # 묵음
             combined_audio = audio1 + silence
 
             # export the concatenated audio as a new file
@@ -197,16 +201,6 @@ def process_audio(request):
 
             plt.close()
 
-
-#             resnet = torch.hub.load('pytorch/vision:v0.6.0', 'resnet34')
-#             resnet.fc = nn.Sequential(
-#                 nn.Dropout(p=0.5),  # 드롭아웃 추가
-#                 nn.Linear(512, 10)  # 출력층의 뉴런 수는 10
-# )
-#             # 모델 입히기
-#             resnet.load_state_dict(torch.load('BankingServer/resnetModel/best_resnet34_weights(911).pth'))
-#             # switch resnetModel to evaluation mode
-#             resnet.eval()
             # define the image transforms
             image_transforms = transforms.Compose([
                 transforms.Resize((224, 224)),
@@ -237,3 +231,39 @@ def process_audio(request):
         print(traceback.format_exc())  # 예외 발생시 traceback 메시지 출력
         return HttpResponseServerError()  # 500 Internal Server Error 응답 반환
 
+
+
+@csrf_exempt
+def audio_test(request):
+    print("audio_test")
+    if request.method == 'POST':
+        # POST 요청에서 biteArray 데이터를 가져옵니다.
+        requestBody = json.loads(request.body)  # 안드로이드 앱에서 보낸 데이터를 가져옵니다.
+        byte_data = requestBody['recordData']
+        byte_array = bytes([struct.pack('b', x)[0] for x in byte_data])
+
+        with open('audio_test_file.aac', 'wb+') as destination:
+            for i in range(0, len(byte_array), 32):
+                chunk = byte_array[i:i + 32]
+                destination.write(chunk)
+
+        # aac -> wav
+        input_file = "audio_test_file.aac"
+        output_file = "audio_test_file.wav"
+
+        # Run the ffmpeg command to convert the AAC file to WAV
+        subprocess.run(["ffmpeg", "-y", "-i", input_file, output_file])
+
+        audio1 = AudioSegment.from_file("my_audio_file.wav", format="wav")
+        silence = AudioSegment.silent(duration=1000)  # 1초 묵음
+        combined_audio = audio1 + silence
+
+        # export the concatenated audio as a new file
+        file_path = "combined.wav"
+        combined_audio.export(file_path, format="wav")
+
+        # 파일 처리가 완료되면 클라이언트에게 응답을 보냅니다.
+        return JsonResponse({"predicted_number": "2"})
+
+        # POST 요청이 아닌 경우 기본 응답을 반환할 수 있습니다.
+    return JsonResponse({"predicted_number": "no"})
