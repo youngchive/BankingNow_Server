@@ -60,18 +60,18 @@ class TransferView(generics.CreateAPIView):
             if money.balance < amount:
                 # 잔액 부족 예외 처리
                 print("잔액부족")
-                return Response({"error": "잔액 부족"}, status=status.HTTP_400_BAD_REQUEST)
+                return_msg = "잔액부족"
+                return Response({"return_msg": "잔액부족"}, status=status.HTTP_400_BAD_REQUEST)
 
             money.balance -= amount
             money.save()
-
             # response_data = {
             #     "user_id": user_id  # Money 모델의 user_id 값을 클라이언트로 전달
             # }
 
             print("송금완료:", money, amount, account_bank_to, account_no_to)
             return_msg = "송금완료"
-            
+
             return Response({"return_msg": return_msg}, status=status.HTTP_201_CREATED)
         return Response({"return_msg": "송금 실패"}, status=status.HTTP_400_BAD_REQUEST)
 
