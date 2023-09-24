@@ -61,7 +61,7 @@ class TransferView(generics.CreateAPIView):
                 # 잔액 부족 예외 처리
                 print("잔액부족")
                 return_msg = "잔액부족"
-                return Response({"return_msg": "잔액부족"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"return_msg": "잔액부족"}, status=status.HTTP_200_OK)
 
             money.balance -= amount
             money.save()
@@ -73,7 +73,7 @@ class TransferView(generics.CreateAPIView):
             return_msg = "송금완료"
 
             return Response({"return_msg": return_msg}, status=status.HTTP_201_CREATED)
-        return Response({"return_msg": "송금 실패"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"return_msg": "송금 실패"}, status=status.HTTP_200_OK)
 
 
 class BalanceCheckView(APIView):
