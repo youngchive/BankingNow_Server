@@ -196,14 +196,16 @@ def process_audio(request):
             librosa.display.specshow(log_spectrogram, sr=sr, hop_length=hop_length, cmap='magma')
 
             # matplotlib 라이브러리를 사용하여 생성된 spectrogram 이미지를 jpg 형식으로 저장
-            image_path = 'static/images/' + 'test.jpg'
+            # image_path = 'static/images/' + 'test.jpg'
+            image_path = f'static/images/test{version}.jpg'
             plt.savefig(image_path)
 
             plt.close()
 
             # define the image transforms
             image_transforms = transforms.Compose([
-                transforms.Resize((224, 224)),
+                transforms.Resize(224),
+                transforms.CenterCrop(224),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
