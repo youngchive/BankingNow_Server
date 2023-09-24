@@ -13,7 +13,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 @csrf_exempt
-def post_bank(request):
+def post_bank(request): #은행 확인하는 함수
     if request.method == 'POST':
         # 클라이언트로부터 문자열 받기
         try:
@@ -22,8 +22,6 @@ def post_bank(request):
         except json.JSONDecodeError as e:
             # JSON 디코딩 오류 처리
             return JsonResponse({"error": "Invalid JSON format"}, status=400)
-
-        print("client:", user_input)
 
         if user_input is not None:
             # 비교 대상 문자열 목록
@@ -40,11 +38,11 @@ def post_bank(request):
                     min_distance = distance
                     closest_candidate = candidate
 
-            print("return", closest_candidate)
             # 결과 리턴
             response_data = {
                 "closest_bank": closest_candidate,
             }
+            print("client:", user_input, "return", closest_candidate )
             return JsonResponse(response_data)
         else:
             # 'user_input'이 None인 경우 처리
@@ -106,8 +104,6 @@ def process_audio(request):
     print("process_audio")
     try:
         if request.method == 'POST':
-            print("POST")
-
             load_resnet_model()
 
             # POST 요청에서 biteArray 데이터를 가져옵니다.

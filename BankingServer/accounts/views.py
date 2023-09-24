@@ -19,15 +19,15 @@ class PasswordCheckView(APIView):
             # 사용자 검색
             user = User.objects.filter(user_id='capjjang').first()
             if user:
-                # 사용자 인증
-                print(password)
-                print(user.user_id)
                 user_authenticated = authenticate(username=user.user_id, password=password)
                 if user_authenticated is not None:
+                    print("사용자:", user.user_id, "password:", password, "개인 인증 확인")
                     return Response({'is_password_correct': True})
                 else:
+                    print("사용자:", user.user_id, "password:", password, "개인 인증 실패")
                     return Response({'is_password_correct': False})
             else:
+                print("사용자:", user.user_id, "password:", password, "개인 인증 실패")
                 return Response({'is_password_correct': False})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
