@@ -1,5 +1,5 @@
 # BankingNow_Server
-뱅킹나우 Django Server 입니다.
+뱅킹나우 Backend Server 입니다.
 
 ## 실행방법
 1. clone받고 폴더 열기
